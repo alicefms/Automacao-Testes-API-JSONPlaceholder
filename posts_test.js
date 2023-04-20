@@ -10,6 +10,10 @@ const schemaOnePost = joi.object({
 const schemaGetAllPosts = joi.array().items(schemaOnePost)
 let body= {userId: 1, title: "primeiro post", body:"Testando a api"}
 
+//o id que seria response.data.id , sera setado hardcoded como 1 para prosseguir com alguns testes, 
+//ja que não é possivel efetuar chamadas com id 101, que é retornado no post.
+
+id = 1
 
 Feature('posts');
 
@@ -31,17 +35,27 @@ Scenario('Criar um post', async ({ I }) => {
     // I.seeResponseCodeIs(200)
 })
 
-Scenario('Modificar um post', async ({ I }) => {
+Scenario('Sobrescrever um post', async ({ I }) => {
     response = await I.sendPostRequest('/posts', body)
     body.body="Testando o put na api"
-    I.sendPutRequest('/posts/' + 1 , body)
+    I.sendPutRequest('/posts/' + id , body)
     I.seeResponseCodeIs(200)
     I.seeResponseMatchesJsonSchema(schemaOnePost)
     I.seeResponseContainsJson(body)
 })
 
+Scenario('Modificar um post', async ({ I }) => {
+    response = await I.sendPostRequest('/posts', body)
+    bodyPatch = {"title": "testando a API"}
+    I.sendPatchRequest
+    ('/posts/' + id , bodyPatch)
+    I.seeResponseCodeIs(200)
+    I.seeResponseContainsJson(bodyPatch)
+})
+
 Scenario('Deletar um post', async ({ I }) => {
-    I.sendDeleteRequest('/posts/'+ 1)
+    response = await I.sendPostRequest('/posts', body)
+    I.sendDeleteRequest('/posts/'+ id)
     I.seeResponseCodeIs(200)
 })
 
