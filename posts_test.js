@@ -8,6 +8,8 @@ const schemaOnePost = joi.object({
     body: joi.string()
 })
 const schemaGetAllPosts = joi.array().items(schemaOnePost)
+let body= {userId: 1, title: "primeiro post", body:"Testando a api"}
+
 
 Feature('posts');
 
@@ -18,7 +20,7 @@ Scenario('Buscar todos os posts',  async ({ I }) => {
 })
 
 Scenario('Criar um post', async ({ I }) => {
-    body= {userId: 1, title: "primeiro post", body:"Testando a api"}
+    
     response = await I.sendPostRequest('/posts', body)
     I.seeResponseCodeIs(201)
     I.seeResponseMatchesJsonSchema(schemaOnePost)
@@ -28,3 +30,19 @@ Scenario('Criar um post', async ({ I }) => {
     // I.seeResponseContainsJson(body)
     // I.seeResponseCodeIs(200)
 })
+
+Scenario('Modificar um post', async ({ I }) => {
+    response = await I.sendPostRequest('/posts', body)
+    body.body="Testando o put na api"
+    I.sendPutRequest('/posts/' + 1 , body)
+    I.seeResponseCodeIs(200)
+    I.seeResponseMatchesJsonSchema(schemaOnePost)
+    I.seeResponseContainsJson(body)
+})
+
+Scenario('Deletar um post', async ({ I }) => {
+    I.sendDeleteRequest('/posts/'+ 1)
+    I.seeResponseCodeIs(200)
+})
+
+
